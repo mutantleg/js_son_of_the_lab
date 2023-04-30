@@ -1,0 +1,185 @@
+
+<html>
+
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<style>
+canvas {
+  image-rendering: optimizeSpeed;             
+  image-rendering: -moz-crisp-edges;          
+  image-rendering: -webkit-optimize-contrast; 
+  image-rendering: -o-crisp-edges;            
+  image-rendering: pixelated;                 
+  -ms-interpolation-mode: nearest-neighbor;   
+}
+</style>
+</head>
+
+<body bgcolor="#000000" onresize="resizeHandle()" >
+
+<div style="text-align:center;" >
+<canvas id="myCanvas" width="320" height="240"  style="border:1px solid #000000;" />
+</div>
+
+
+<script> 
+   function resizeHandle()
+   {/*
+    if (window.innerWidth > 1024 && window.innerHeight > 768)
+    {  canvas.style.width = '1024px'; canvas.style.height = '768px';  return; }
+    if (window.innerWidth > 512 && window.innerHeight > 384)
+    {  canvas.style.width = '512px'; canvas.style.height = '384px';  return; }
+    canvas.style.width = '256px'; canvas.style.height = '192px'; */
+   }
+
+</script>
+
+ <script>
+  var canvas = document.getElementById("myCanvas");
+  canvas.style.width = '640px'; canvas.style.height = '480px';
+ // canvas.style.width = '800px'; canvas.style.height = '600px';
+
+  var ctx = canvas.getContext("2d"); 
+  ctx.imageSmoothingEnabled = false;
+  var firstRun = 1; 
+  var bDebug = false; 
+
+  
+  
+  
+  function isFullScreen()
+  {
+    var full_screen_element = document.fullscreenElement;
+      // console.log("fullscreen element ", full_screen_element);
+    if (full_screen_element !== null) { return true; }
+    return false; 
+  }//isfullscreen
+
+  function setFullScreen(enabled)
+  {
+    if(document.fullscreenEnabled == false) { return; }
+    
+    if (isFullScreen() && enabled == false)
+    {
+    
+    document.exitFullscreen()
+    .then(function() {
+       console.log(gt,"Im no longer fullscreen!");
+    })
+    .catch(function(error) {
+      console.log(gt, "i couldnt exit fullscreen ",error.message);
+    });
+    }//endif 
+  
+
+    if (enabled == false) { return; }
+  
+    canvas.requestFullscreen()
+        .then(function() {
+          console.log(gt,"Im in fullscreen!");
+        })
+        .catch(function(e) {
+          console.log(gt,"I couldnt go fullscreen :O ", e.message);
+        });
+  }//setFullScreen
+
+  function toggleFullScreen()
+  {
+   if (isFullScreen() ) { setFullScreen(false); return; }
+   setFullScreen(true);
+  }//togglefull
+
+  //need to predefine for chrome
+  function init() { console.log("wronginit"); } 
+  function update() { console.log("wrongupdate"); }
+  
+  var lastTime = 0;
+  var load = 0;  
+  
+  //so this settimeout hack 
+  //so far guarantess 60 fps on all browsers 
+  function mainLoop(rtime)
+    {
+     
+      //check if tileimage is loaded
+      //need to wait even though its part of file 
+      if  (load == 0)
+      {
+        load = 1;
+        //if (tileImage == undefined) { load  = 0; }
+        //else if (tileImage.width <= 0) { load = 0; }        
+      }//endif
+      
+     if (load < 1) { setTimeout(mainLoop, 1); return; }
+  
+     //is there a way to eliminate new ? 
+     var ctime = rtime; //new Date().getTime();
+     var dt;
+     dt = ctime - lastTime;
+     //if (dt > (1000/60))
+     // console.log("rtime ", rtime );
+     if (dt > 14)
+     {
+      //console.log("dt ",dt);
+      lastTime = ctime;
+       ctx.save();
+        update();
+       ctx.restore();
+     
+     }
+          
+     //setTimeout(mainLoop, 5);
+      requestAnimationFrame(mainLoop);
+     //if (firstRun==1){ firstRun = 0; init(); }      
+    }//mainLoop
+    
+    //seems to be faster than settimeout
+    //setInterval(mainLoop, Math.floor(1000/120));
+    //setTimeout(mainLoop, 1);
+    mainLoop(0);
+</script>
+
+
+
+<!-- core libs -->
+<script src="c_debug.js" ></script> 
+<script src="core.js" ></script> 
+<script src="soundalt.js" ></script> 
+
+<!-- assets (music, image, maps) -->
+<script src="asset.js" ></script> 
+
+<!-- load extra libs here -->
+<script src="r_imgdata.js" ></script> 
+<script src="g_global.js" ></script> 
+<script src="g_config.js" ></script> 
+<script src="i_font16x24.png.js" ></script> 
+<script src="g_menu.js" ></script> 
+
+<!-- 3D Libs -->
+<script src="r_skinlib.js" ></script> 
+<script src="r_matlib.js" ></script> 
+<script src="r_trilib.js" ></script> 
+<script src="r_trimask.js" ></script> 
+<script src="r_triaffine.js" ></script> 
+<script src="r_camsprlib.js" ></script> 
+
+<script src="r_vislib.js" ></script> 
+
+
+<!-- work in progress -->
+<script src="x_partlib.js" ></script> 
+<script src="x_tilemap.js" ></script> 
+<script src="x_actlib.js" ></script> 
+
+<!-- main  (update function) -->
+<script src="main_monst.js" ></script> 
+<script src="main_player.js" ></script> 
+<script src="main.js" ></script> 
+
+
+</body>
+
+
+</html>
